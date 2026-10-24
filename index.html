@@ -13,7 +13,7 @@
 <body>
 <!-- data-i18n: translate text; data-i18n-html: translate markup; data-i18n-attr: translate listed attributes (see i18n.js) -->
 <header class="bar">
-  <strong>ARIZ-85C</strong>
+  <div class="brand" title="Algorithm of Inventive Problem Solving" data-i18n-attr="title"><span class="brand-ariz">ARIZ</span><span class="brand-ver" id="brandVer">-85C</span><span class="app-ver" id="appVersion">v02.03</span></div>
   <select id="wsSelect" aria-label="Worksheet" data-i18n-attr="aria-label"></select>
   <button id="newBtn" title="New blank worksheet" data-i18n data-i18n-attr="title">New</button>
   <button id="examplesBtn" data-i18n>Examples</button>
@@ -51,8 +51,7 @@
   <div id="helpBody"></div>
 </aside>
 <main>
-  <p class="muted"><span data-i18n>Works offline. Data stays in this browser (autosave) or in the .ariz files you save. Based on ARIZ-85C (Algorithm of Inventive Problem Solving) by Genrikh Altshuller.</span>
-  <span id="appVersion">v02.02</span></p>
+  <p class="muted"><span data-i18n>Works offline. Data stays in this browser (autosave) or in the .ariz files you save. Based on ARIZ-85C (Algorithm of Inventive Problem Solving) by Genrikh Altshuller.</span></p>
   <h1 id="wsTitle"></h1>
   <form id="mainForm" autocomplete="off"></form>
 </main>

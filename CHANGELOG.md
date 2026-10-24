@@ -1,5 +1,12 @@
 # Changelog
 
+## v02.03 — 2026-10-24
+
+- **One language at a time:** the Examples dialog lists only examples in the interface language; each worksheet belongs to the language it was made in, and the worksheet list shows only that language's worksheets. Other-language worksheets are kept and come back when you switch back. A language with no worksheets yet gets its examples on first switch. The open worksheet is remembered per language
+- Older libraries (v02.02 and before) are tagged on first start: worksheets that came from an example get that example's language, all others the current language
+- **Version visible** in the header as a pill next to the name (moved from the intro text)
+- **New wordmark:** larger "ARIZ" in white on DrakonWidget green, "-85C" (LT: "-85V") in teal on light teal; tooltip "Algorithm of Inventive Problem Solving"; brand colours are new tokens `--brand-1`, `--brand-2`, `--brand-bg`
+
 ## v02.02 — 2026-10-24
 
 - First visit adds **all examples in the current language** to the worksheet list (DrakonWidget-style), not only the first; the first one opens. No examples in that language → the first example. A migrated v01.00 worksheet still comes first and stays open

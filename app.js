@@ -227,6 +227,9 @@ function progress() {
 const LIST_KEY = 'ariz_worksheets', CUR_KEY = 'ariz_current', WS = id => 'ariz_ws_' + id;
 const sel = document.getElementById('wsSelect');
 let list = [], current = null, timer = null;
+// Each worksheet belongs to the language it was made in; only the current language's worksheets are shown.
+const CUR_LANG_KEY = CUR_KEY + '_' + LANG;
+const visible = () => list.filter(w => w.lang === LANG);
 
 const readJSON = (k, def) => { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } };
 const store = (k, v) => localStorage.setItem(k, JSON.stringify(v));
@@ -235,10 +238,10 @@ const currentName = () => list.find(w => w.id === current)?.name || tr('Untitled
 const uniqueName = (base, except) => { let n = base, i = 2; while (list.some(w => w.name === n && w.id !== except)) n = `${base} (${i++})`; return n; };
 const isWorksheet = o => o && typeof o === 'object' && !Array.isArray(o);
 
-function saveList() { store(LIST_KEY, list); localStorage.setItem(CUR_KEY, current); }
+function saveList() { store(LIST_KEY, list); localStorage.setItem(CUR_LANG_KEY, current); }
 
 function renderSelect() {
-  sel.replaceChildren(...list.map(w => { const o = el('option', '', w.name); o.value = w.id; return o; }));
+  sel.replaceChildren(...visible().map(w => { const o = el('option', '', w.name); o.value = w.id; return o; }));
   sel.value = current;
   document.getElementById('wsTitle').textContent = currentName();
   document.title = currentName() + ' – ' + tr('ARIZ-85C');
@@ -262,7 +265,7 @@ function addWorksheet(name, data = {}) {
   flush();
   const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   try { store(WS(id), data); } catch { return alert(tr('Not enough browser storage. Delete some worksheets or images first.')); }
-  list.push({ id, name: uniqueName(name) });
+  list.push({ id, name: uniqueName(name), lang: LANG });
   current = id; saveList(); setData(data); renderSelect();
   status('');
 }
@@ -274,10 +277,10 @@ function switchTo(id) {
 }
 sel.onchange = () => switchTo(sel.value);
 
-// ---- Examples: examples/index.json lists [{file, lang, name, description}]; current language first.
+// ---- Examples: examples/index.json lists [{file, lang, name, description}].
 let examples = null;
-const getExamples = async () => examples ??= (await fetch('examples/index.json').then(r => r.json()))
-  .sort((a, b) => (b.lang === LANG) - (a.lang === LANG));
+const getExamples = async () => examples ??= await fetch('examples/index.json').then(r => r.json());
+const langExamples = async () => (await getExamples()).filter(e => e.lang === LANG);
 async function loadExample(ex) {
   const data = await fetch('examples/' + ex.file).then(r => r.json());
   addWorksheet(ex.name, data);
@@ -287,7 +290,7 @@ const exDialog = document.getElementById('exDialog');
 async function showExamples() {
   const ul = document.getElementById('exList');
   try {
-    ul.replaceChildren(...(await getExamples()).map(ex => {
+    ul.replaceChildren(...(await langExamples()).map(ex => {
       const li = el('li'), info = el('div'), b = el('button', 'primary', tr('Open copy'));
       const name = el('strong', '', ex.name);
       if (FLAGS[ex.lang]) name.insertAdjacentHTML('afterbegin', FLAGS[ex.lang]); // static SVG from i18n.js
@@ -325,7 +328,8 @@ const menuActions = {
     clearTimeout(timer); timer = null;
     localStorage.removeItem(WS(current));
     list = list.filter(w => w.id !== current);
-    if (list.length) switchTo(list[0].id); else addWorksheet(tr('Untitled'));
+    const [next] = visible();
+    if (next) switchTo(next.id); else addWorksheet(tr('Untitled'));
   },
 };
 const menu = document.querySelector('.bar .menu');
@@ -409,25 +413,29 @@ document.getElementById('examplesBtn').onclick = showExamples;
 document.getElementById('printBtn').onclick = () => { fields().forEach(grow); print(); };
 document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); save(); } });
 
-// ---- Start: restore library, or seed it (migrating the v01.00 single-form autosave)
+// ---- Start: restore library; a language with no worksheets yet gets its examples (DrakonWidget-style).
 (async () => {
   list = readJSON(LIST_KEY, []);
-  if (Array.isArray(list) && list.length) {
-    const id = localStorage.getItem(CUR_KEY);
-    switchTo(list.some(w => w.id === id) ? id : list[0].id);
-  } else {
-    list = [];
-    const old = readJSON(AUTOSAVE_KEY, null);
+  if (!Array.isArray(list)) list = [];
+  let all = [];
+  try { all = await getExamples(); } catch (e) { console.warn('Examples unavailable', e); }
+  // v02.02 and older had no language per worksheet: take it from the example it came from, else the current one.
+  const base = n => n.replace(/ \(\d+\)$/, '');
+  for (const w of list) if (!LANGS[w.lang]) w.lang = all.find(e => e.name === base(w.name))?.lang || LANG;
+  const id = localStorage.getItem(CUR_LANG_KEY) || localStorage.getItem(CUR_KEY); // read before seeding moves it
+  const fresh = !list.length;
+  if (fresh) {
+    const old = readJSON(AUTOSAVE_KEY, null); // v01.00 single-form autosave
     if (isWorksheet(old)) { addWorksheet(tr('My worksheet'), old); localStorage.removeItem(AUTOSAVE_KEY); }
-    // Seed every example in the current language (DrakonWidget-style); no match → the first example.
-    try {
-      const all = await getExamples(), mine = all.filter(e => e.lang === LANG);
-      for (const ex of mine.length ? mine : all.slice(0, 1))
-        try { await loadExample(ex); } catch (e) { console.warn('Example unavailable', ex.file, e); }
-    } catch (e) { console.warn('Examples unavailable', e); }
-    if (list.length) switchTo(list[0].id); // migrated worksheet, else the first example
-    if (!list.length) addWorksheet(tr('Untitled'));
   }
+  if (fresh || !visible().length) {
+    const mine = all.filter(e => e.lang === LANG);
+    for (const ex of mine.length ? mine : all.slice(0, 1))
+      try { await loadExample(ex); } catch (e) { console.warn('Example unavailable', ex.file, e); }
+  }
+  const shown = visible();
+  if (shown.length) switchTo((shown.find(w => w.id === id) || shown[0]).id);
+  else addWorksheet(tr('Untitled'));
   // Opening a .ariz file via OS "Open with" when installed (Chromium file handling)
   if ('launchQueue' in window) launchQueue.setConsumer(async p => { if (p.files[0]) openFile(await p.files[0].getFile()); });
 })();

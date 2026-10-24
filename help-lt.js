@@ -54,15 +54,15 @@ const FIELD_HELP_LT = {
 const EXAMPLES_HELP_LT = `
 <h3>Darbalapiai</h3>
 <ul>
-  <li>Įrankių juostos sąraše – visi jūsų darbalapiai šioje naršyklėje. Kiekvienas <b>išsaugomas automatiškai</b>, kai rašote.</li>
+  <li>Įrankių juostos sąraše – jūsų darbalapiai pasirinkta kalba. Kiekvienas <b>išsaugomas automatiškai</b>, kai rašote.</li>
   <li><b>Naujas</b> – tuščias darbalapis. <b>⋯</b> → pervadinti, dubliuoti, išvalyti ar ištrinti esamą.</li>
   <li><b>Išsaugoti</b> eksportuoja darbalapį kaip <code>.ariz</code> failą, pasirinktinai su slaptažodžiu (pamiršto atkurti neįmanoma). <b>Atidaryti</b> importuoja failą kaip <i>naują</i> darbalapį – niekas neperrašoma.</li>
   <li><b>PDF / Spausdinti</b> spausdina esamą darbalapį be pastabų ir pagalbos.</li>
-  <li><b>Kalba</b> (vėliavėlė viršuje dešinėje) keičia sąsajos kalbą; darbalapių tekstai lieka tokie, kokius parašėte.</li>
+  <li><b>Kalba</b> (vėliavėlė viršuje dešinėje) keičia sąsajos kalbą. Kiekviena kalba turi savo darbalapius ir pavyzdžius; kitos kalbos darbalapiai išlieka ir vėl matomi grįžus prie tos kalbos.</li>
 </ul>
 <h3>Pavyzdžiai</h3>
 <ul>
-  <li><b>Pavyzdžiai</b> – išnagrinėti atvejai (vėliavėlė rodo kalbą, pasirinktos kalbos – pirmi). <b>Atidaryti kopiją</b> prideda kopiją prie jūsų darbalapių – keiskite drąsiai, originalas lieka ir gali būti atidarytas vėl.</li>
+  <li><b>Pavyzdžiai</b> – išnagrinėti atvejai pasirinkta kalba. <b>Atidaryti kopiją</b> prideda kopiją prie jūsų darbalapių – keiskite drąsiai, originalas lieka ir gali būti atidarytas vėl.</li>
   <li>Pirmą kartą atidarius programą, visi jūsų kalbos pavyzdžiai įkeliami į darbalapių sąrašą; atidaromas pirmasis (<i>Pieštukas</i>).</li>
   <li>Spustelėkite <b>ⓘ</b> prie žingsnio – pamatysite, ko jis klausia, ir palyginkite su pavyzdžio atsakymu.</li>
 </ul>

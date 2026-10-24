@@ -55,15 +55,15 @@ const FIELD_HELP_EN = {
 const EXAMPLES_HELP_EN = `
 <h3>Worksheets</h3>
 <ul>
-  <li>The list in the toolbar holds all your worksheets in this browser. Each one <b>autosaves</b> as you type.</li>
+  <li>The list in the toolbar holds your worksheets in the current language. Each one <b>autosaves</b> as you type.</li>
   <li><b>New</b> starts a blank worksheet. <b>⋯</b> → Rename, Duplicate, Clear or Delete the current one.</li>
   <li><b>Save</b> exports the current worksheet as a <code>.ariz</code> file, optionally with a password (it cannot be recovered if lost). <b>Open</b> imports a file as a <i>new</i> worksheet — nothing is overwritten.</li>
   <li><b>PDF / Print</b> prints the current worksheet; notes and help are left out.</li>
-  <li><b>Language</b> (flag, top right) switches the interface; your worksheet texts stay as you wrote them.</li>
+  <li><b>Language</b> (flag, top right) switches the interface. Each language has its own worksheets and examples; the others are kept and come back when you switch back.</li>
 </ul>
 <h3>Examples</h3>
 <ul>
-  <li><b>Examples</b> lists worked cases. <b>Open copy</b> adds a copy to your worksheets — change it freely, the original stays as it is and can be opened again.</li>
+  <li><b>Examples</b> lists worked cases in the current language. <b>Open copy</b> adds a copy to your worksheets — change it freely, the original stays as it is and can be opened again.</li>
   <li>On the very first visit all examples in your language are added to the worksheet list; the first one (<i>Pencil</i>) is opened.</li>
   <li>Click <b>ⓘ</b> next to a step to see what it asks for, then compare with how the example answers it.</li>
 </ul>

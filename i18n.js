@@ -18,6 +18,8 @@ const FLAGS = {
 const I18N = { lt: {
   // Toolbar, menus, dialogs
   'ARIZ-85C': 'ARIZ-85V',
+  '-85C': '-85V',
+  'Algorithm of Inventive Problem Solving': 'Išradybinių uždavinių sprendimo algoritmas',
   'Worksheet': 'Darbalapis',
   'New': 'Naujas',
   'New blank worksheet': 'Naujas tuščias darbalapis',
@@ -196,7 +198,7 @@ for (const e of document.querySelectorAll('[data-i18n]')) e.textContent = tr(nor
 for (const e of document.querySelectorAll('[data-i18n-html]')) e.innerHTML = tr(norm(e.innerHTML));
 for (const e of document.querySelectorAll('[data-i18n-attr]'))
   for (const a of e.dataset.i18nAttr.split(',')) e.setAttribute(a, tr(e.getAttribute(a)));
-document.querySelector('.bar strong').textContent = tr('ARIZ-85C');
+document.getElementById('brandVer').textContent = tr('-85C');
 
 // Language menu: switching saves the worksheet and reloads, so every text is rebuilt in the new language.
 (function () {
