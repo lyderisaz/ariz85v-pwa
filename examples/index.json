@@ -10,5 +10,17 @@
     "lang": "lt",
     "name": "Pieštukas: aštrus ar tvirtas smaigalys",
     "description": "Klasikinis mokomasis atvejis: plonas grafito smaigalys braižo plonas linijas, bet lūžta ir greitai dyla. Užpildytos 1–3 dalys."
+  },
+  {
+    "file": "bus.ariz",
+    "lang": "en",
+    "name": "Bus: twice the passengers, same narrow streets",
+    "description": "Classic TRIZ training case: at rush hour a city bus must carry twice as many people, but tunnels and tight turns limit its size. Parts 1–3 filled in."
+  },
+  {
+    "file": "bus_lt.ariz",
+    "lang": "lt",
+    "name": "Autobusas: dvigubai daugiau keleivių tomis pačiomis gatvėmis",
+    "description": "Klasikinis TRIZ mokomasis uždavinys: piko metu miesto autobusas turi pervežti dvigubai daugiau žmonių, bet tuneliai ir statūs posūkiai riboja jo dydį. Užpildytos 1–3 dalys."
   }
 ]

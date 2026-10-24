@@ -11,7 +11,7 @@ Live: https://lyderisaz.github.io/ariz85v-pwa/
 - Two languages: flag menu in the top-right corner (LT / EN); first visit follows the browser language
 - Works offline and installs as an app (Chrome/Edge: install icon in the address bar)
 - Several worksheets in one browser: switch, New, Rename, Duplicate, Delete — each autosaves
-- Examples: open a copy of a worked case (*Pencil* in EN and LT); export your own worksheet as an example
+- Examples: open a copy of a worked case (*Pencil*, *Bus* — each in EN and LT); export your own worksheet as an example
 - Open/Save `.ariz` files (Open imports as a new worksheet), optionally password-encrypted (AES-GCM 256, PBKDF2-SHA256)
 - Images per step: click, drag & drop or paste
 - Help: round **?** in the top-right corner → *Using worksheets & examples* and *ARIZ guide* (steps, rules, typical conflicts, separation principles, terms); **ⓘ** next to each step opens a short explanation with a guiding question
@@ -28,7 +28,8 @@ app.js                 form schema, rendering, worksheet library, examples, .ari
 help.js                help pages and ⓘ step callouts — English
 help-lt.js             the same help texts in Lithuanian
 examples/index.json    list of examples: [{ file, lang, name, description }]
-examples/*.ariz        example worksheets (unencrypted .ariz)
+examples/*.ariz        example worksheets (unencrypted .ariz): pencil, bus — EN and LT
+tools/make_*.py        Python scripts that generate the example files (texts + SVG drawings, with self-checks)
 style.css              brand tokens (top), layout, dark mode, print styles
 sw.js                  service worker (offline cache) — bump VERSION on every release
 manifest.webmanifest   PWA metadata, .ariz file handler
@@ -68,6 +69,12 @@ Then open http://localhost:8765.
 1. Fill a worksheet, then ⋯ → **Export as example…** (unencrypted, includes name, description and language).
 2. Put the file in `examples/` and add an entry with its `lang` to `examples/index.json`.
 3. Add the path to `FILES` in `sw.js`, bump `VERSION`, release.
+
+Or write a generator like `tools/make_bus.py` (both languages in one script, checks that EN and LT fill the same fields):
+
+```bash
+python tools/make_bus.py examples
+```
 
 ## .ariz file format
 

@@ -1,5 +1,10 @@
 # Changelog
 
+## v02.01 — 2026-10-24
+
+- New example in EN and LT: **Bus / Autobusas** — classic TRIZ training problem (rush hour: twice the passengers, but tunnels and tight turns limit the size). Parts 1–3 with 5 drawings (EC-1, EC-2, selected EC, operating zone, operating time); IFR directions: articulated bus, double-decker, rear-wheel steering, bus + trailer, standing room; PCs on length, stiffness, height
+- `tools/`: generator scripts for all example files (pencil, bus)
+
 ## v02.00 — 2026-10-24
 
 - **Lithuanian interface** (LT) next to English: form, toolbar, menus, dialogs, messages, help pages, ARIZ guide and all 24 ⓘ callouts; LT uses ARIZ-85V terms (uždavinys, TP / FP, IGR, MLR, OZ / OL, gaminys / įrankis)
