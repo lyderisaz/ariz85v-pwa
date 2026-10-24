@@ -419,8 +419,13 @@ document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.ke
     list = [];
     const old = readJSON(AUTOSAVE_KEY, null);
     if (isWorksheet(old)) { addWorksheet(tr('My worksheet'), old); localStorage.removeItem(AUTOSAVE_KEY); }
-    try { const [first] = await getExamples(); if (first) await loadExample(first); } catch (e) { console.warn('Examples unavailable', e); }
-    if (isWorksheet(old)) switchTo(list[0].id);
+    // Seed every example in the current language (DrakonWidget-style); no match → the first example.
+    try {
+      const all = await getExamples(), mine = all.filter(e => e.lang === LANG);
+      for (const ex of mine.length ? mine : all.slice(0, 1))
+        try { await loadExample(ex); } catch (e) { console.warn('Example unavailable', ex.file, e); }
+    } catch (e) { console.warn('Examples unavailable', e); }
+    if (list.length) switchTo(list[0].id); // migrated worksheet, else the first example
     if (!list.length) addWorksheet(tr('Untitled'));
   }
   // Opening a .ariz file via OS "Open with" when installed (Chromium file handling)

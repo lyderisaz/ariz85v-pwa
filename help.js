@@ -64,7 +64,7 @@ const EXAMPLES_HELP_EN = `
 <h3>Examples</h3>
 <ul>
   <li><b>Examples</b> lists worked cases. <b>Open copy</b> adds a copy to your worksheets — change it freely, the original stays as it is and can be opened again.</li>
-  <li>On the very first visit the first example (<i>Pencil</i>) is opened for you.</li>
+  <li>On the very first visit all examples in your language are added to the worksheet list; the first one (<i>Pencil</i>) is opened.</li>
   <li>Click <b>ⓘ</b> next to a step to see what it asks for, then compare with how the example answers it.</li>
 </ul>
 <h3>Create an example</h3>

@@ -1,5 +1,5 @@
 // Bump VERSION when you change any file so installed copies update.
-const VERSION = 'ariz85v-v02.01';
+const VERSION = 'ariz85v-v02.02';
 const FILES = ['./', 'index.html', 'style.css', 'i18n.js', 'app.js', 'help-lt.js', 'help.js', 'manifest.webmanifest', 'icon.svg',
   'examples/index.json', 'examples/pencil.ariz', 'examples/pencil_lt.ariz', 'examples/bus.ariz', 'examples/bus_lt.ariz'];
 

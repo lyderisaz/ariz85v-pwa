@@ -1,5 +1,11 @@
 # Changelog
 
+## v02.02 — 2026-10-24
+
+- First visit adds **all examples in the current language** to the worksheet list (DrakonWidget-style), not only the first; the first one opens. No examples in that language → the first example. A migrated v01.00 worksheet still comes first and stays open
+- Help texts (EN, LT) updated accordingly
+- Existing users keep their list as it is; new examples can still be added via **Examples → Open copy**
+
 ## v02.01 — 2026-10-24
 
 - New example in EN and LT: **Bus / Autobusas** — classic TRIZ training problem (rush hour: twice the passengers, but tunnels and tight turns limit the size). Parts 1–3 with 5 drawings (EC-1, EC-2, selected EC, operating zone, operating time); IFR directions: articulated bus, double-decker, rear-wheel steering, bus + trailer, standing room; PCs on length, stiffness, height

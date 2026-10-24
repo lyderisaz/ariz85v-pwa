@@ -63,7 +63,7 @@ const EXAMPLES_HELP_LT = `
 <h3>Pavyzdžiai</h3>
 <ul>
   <li><b>Pavyzdžiai</b> – išnagrinėti atvejai (vėliavėlė rodo kalbą, pasirinktos kalbos – pirmi). <b>Atidaryti kopiją</b> prideda kopiją prie jūsų darbalapių – keiskite drąsiai, originalas lieka ir gali būti atidarytas vėl.</li>
-  <li>Pirmą kartą atidarius programą, automatiškai atidaromas pirmasis pavyzdys (<i>Pieštukas</i>).</li>
+  <li>Pirmą kartą atidarius programą, visi jūsų kalbos pavyzdžiai įkeliami į darbalapių sąrašą; atidaromas pirmasis (<i>Pieštukas</i>).</li>
   <li>Spustelėkite <b>ⓘ</b> prie žingsnio – pamatysite, ko jis klausia, ir palyginkite su pavyzdžio atsakymu.</li>
 </ul>
 <h3>Kaip sukurti pavyzdį</h3>
