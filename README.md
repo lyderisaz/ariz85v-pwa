@@ -51,3 +51,7 @@ Encrypted files are `{ "salt": [...], "iv": [...], "data": [...] }` byte arrays 
 ## Credits
 
 ARIZ-85C method by Genrikh Altshuller.
+
+## License
+
+Code: [MIT](LICENSE).
