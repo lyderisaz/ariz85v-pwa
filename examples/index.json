@@ -1,7 +1,14 @@
 [
   {
     "file": "pencil.ariz",
+    "lang": "en",
     "name": "Pencil: sharp tip vs. strong tip",
     "description": "Classic training case: a thin graphite tip draws fine lines but breaks and wears fast. Parts 1–3 filled in."
+  },
+  {
+    "file": "pencil_lt.ariz",
+    "lang": "lt",
+    "name": "Pieštukas: aštrus ar tvirtas smaigalys",
+    "description": "Klasikinis mokomasis atvejis: plonas grafito smaigalys braižo plonas linijas, bet lūžta ir greitai dyla. Užpildytos 1–3 dalys."
   }
 ]

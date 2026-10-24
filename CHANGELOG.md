@@ -1,5 +1,14 @@
 # Changelog
 
+## v02.00 — 2026-10-24
+
+- **Lithuanian interface** (LT) next to English: form, toolbar, menus, dialogs, messages, help pages, ARIZ guide and all 24 ⓘ callouts; LT uses ARIZ-85V terms (uždavinys, TP / FP, IGR, MLR, OZ / OL, gaminys / įrankis)
+- **Language menu** with flags (LT / EN) in the top-right corner, left of **?**; choice is remembered; first visit follows the browser language; switching saves the worksheet and reloads
+- Lithuanian example *Pieštukas: aštrus ar tvirtas smaigalys* (Parts 1–3, LT drawings); examples list shows a flag and puts the current language first; first visit opens the example in the current language
+- `.ariz` gains optional `_lang`; examples index entries have `lang`; worksheet file names drop diacritics
+- New files: `i18n.js`, `help-lt.js`, `examples/pencil_lt.ariz`
+- Local working folder for v2: `ariz85v-pwa-02` (v1 frozen in `ariz85v-pwa-01` at v01.03)
+
 ## v01.03 — 2026-10-24
 
 - Updates apply on the first visit: when a new version takes over, the page saves the worksheet and reloads itself once (no reload on the very first install)

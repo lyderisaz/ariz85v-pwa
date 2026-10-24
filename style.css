@@ -34,7 +34,7 @@
 * { box-sizing: border-box; }
 body { margin: 0; font: var(--font); background: var(--canvas); color: var(--text); }
 a { color: var(--accent); }
-.bar { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 8px 64px 8px 16px; background: var(--card); border-bottom: 1px solid var(--card-border); box-shadow: 0 2px 6px var(--shadow); }
+.bar { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 8px 140px 8px 16px; background: var(--card); border-bottom: 1px solid var(--card-border); box-shadow: 0 2px 6px var(--shadow); }
 .bar strong { color: var(--accent); margin-right: auto; font-size: 16px; }
 .progress { width: 110px; height: 6px; background: var(--line); border-radius: var(--radius); overflow: hidden; }
 #progressBar { height: 100%; width: 0; background: var(--primary); transition: width .3s; }
@@ -52,6 +52,14 @@ button:focus-visible, summary:focus-visible, select:focus-visible { outline: 2px
 .menu > div button { text-align: left; border: none; }
 button.danger { color: var(--danger); }
 button.danger:hover { background: var(--danger); color: var(--on-primary); }
+
+/* Language menu, left of "?" */
+.flag { display: inline-block; width: 20px; height: 14px; border-radius: 2px; vertical-align: -2px; margin-right: 6px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .15); }
+.lang-menu { position: fixed; top: 9px; right: 58px; z-index: 35; }
+.lang-menu summary { padding: 5px 8px; font-weight: 700; font-size: 13px; }
+.lang-menu > div { min-width: 150px; }
+.lang-menu button[aria-pressed="true"] { font-weight: 700; }
+#exList .flag { margin-right: 8px; }
 
 /* Help: round "?" fixed in the top-right corner, menu of two helps, side drawer */
 .help-menu { position: fixed; top: 6px; right: 12px; z-index: 35; }
@@ -106,7 +114,7 @@ dialog::backdrop { background: rgba(0, 0, 0, 0.2); }
 dialog input { width: 100%; padding: 6px; margin: 4px 0; font: inherit; }
 dialog menu { display: flex; gap: 8px; justify-content: flex-end; padding: 0; margin: 12px 0 0; flex-wrap: wrap; }
 @media print {
-  .bar, main > p.muted, .draw-area .hint, .note, .help-menu, .help, .ibtn, .callout { display: none !important; }
+  .bar, main > p.muted, .draw-area .hint, .note, .help-menu, .lang-menu, .help, .ibtn, .callout { display: none !important; }
   body { background: #fff; color: #000; }
   main { border: 0; box-shadow: none; margin: 0; padding: 0; }
   textarea { border: none; border-bottom: 1px solid #999; border-radius: 0; resize: none; }

@@ -3,7 +3,7 @@
 // Texts are own-words summaries of ARIZ-85C (G. S. Altshuller, 1985), not translations of the original.
 
 // Callouts keyed by step number (matched from heading/label text) or by field name. [explanation, guiding question]
-const FIELD_HELP = {
+const FIELD_HELP_EN = {
   keyProblem: ['ARIZ works on one well-chosen problem. If the situation holds several, pick the one whose solution helps most — others often disappear with it.',
     'Which single problem, if solved, removes the most trouble?'],
   '1.1': ['Restate the situation as a mini-problem in plain words: the system stays as it is or gets simpler, yet the needed action appears (or the harmful one disappears). This sharpens the conflict and rules out compromises early.',
@@ -52,13 +52,14 @@ const FIELD_HELP = {
     'Which single property must have opposite values?'],
 };
 
-const EXAMPLES_HELP = `
+const EXAMPLES_HELP_EN = `
 <h3>Worksheets</h3>
 <ul>
   <li>The list in the toolbar holds all your worksheets in this browser. Each one <b>autosaves</b> as you type.</li>
   <li><b>New</b> starts a blank worksheet. <b>⋯</b> → Rename, Duplicate, Clear or Delete the current one.</li>
   <li><b>Save</b> exports the current worksheet as a <code>.ariz</code> file, optionally with a password (it cannot be recovered if lost). <b>Open</b> imports a file as a <i>new</i> worksheet — nothing is overwritten.</li>
   <li><b>PDF / Print</b> prints the current worksheet; notes and help are left out.</li>
+  <li><b>Language</b> (flag, top right) switches the interface; your worksheet texts stay as you wrote them.</li>
 </ul>
 <h3>Examples</h3>
 <ul>
@@ -80,7 +81,7 @@ const EXAMPLES_HELP = `
   <li><code>.ariz</code> files are JSON: field name → text, <code>uploadedImages</code> for drawings, optional <code>_name</code> / <code>_description</code>.</li>
 </ul>`;
 
-const GUIDE_HELP = `
+const GUIDE_HELP_EN = `
 <nav><a href="#g-what">What ARIZ is</a><a href="#g-p1">Part 1</a><a href="#g-p2">Part 2</a><a href="#g-p3">Part 3</a><a href="#g-t1">Conflicts</a><a href="#g-t2">Separation</a><a href="#g-next">Parts 4–9</a><a href="#g-terms">Terms</a></nav>
 <h3 id="g-what">What ARIZ is</h3>
 <p>ARIZ — the Algorithm of Inventive Problem Solving — is a step-by-step programme for analysing and solving inventive problems, built on the laws of technical system evolution. Its author is <b>Genrikh S. Altshuller</b>; versions are named by year (ARIZ-68, -71, -77, -82, -85). This worksheet follows <b>ARIZ-85C</b> (Russian: АРИЗ-85В), Parts 1–3.</p>
@@ -174,11 +175,18 @@ const GUIDE_HELP = `
 <tr><td>SLP</td><td>smart little people modelling — ММЧ</td></tr>
 <tr><td>Multi-screen thinking</td><td>looking at system, supersystem and subsystem, past and future at once</td></tr></table>`;
 
+// Lithuanian texts live in help-lt.js (loaded first); English is the fallback.
+const LT_HELP = LANG === 'lt' && typeof FIELD_HELP_LT !== 'undefined';
+const FIELD_HELP = LT_HELP ? FIELD_HELP_LT : FIELD_HELP_EN;
+
 (function () {
   const $ = id => document.getElementById(id);
   const drawer = $('helpDrawer'), helpMenu = document.querySelector('.help-menu');
   const HELP_SEEN = 'ariz_help_seen';
-  const PAGES = { examples: ['Using worksheets & examples', EXAMPLES_HELP], guide: ['ARIZ-85C guide', GUIDE_HELP] };
+  const PAGES = {
+    examples: [tr('Using worksheets & examples'), LT_HELP ? EXAMPLES_HELP_LT : EXAMPLES_HELP_EN],
+    guide: [tr('ARIZ-85C guide'), LT_HELP ? GUIDE_HELP_LT : GUIDE_HELP_EN],
+  };
 
   function openHelp(page) {
     const [title, html] = PAGES[page];
@@ -204,17 +212,17 @@ const GUIDE_HELP = `
     if (a) { e.preventDefault(); drawer.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' }); }
   });
 
-  // ⓘ callouts: headings "Step 1.2. …", "1.1.3. …" and labels "1.2.1. Product" are matched by number.
-  const stepOf = text => (text.match(/^(?:Step )?(\d\.\d(?:\.\d)?)\./) || [])[1];
+  // ⓘ callouts: headings "Step 1.2. …" / "1.2 žingsnis. …", "1.1.3. …" and labels "1.2.1. Product" are matched by number.
+  const stepOf = text => (text.match(/^\D*?(\d\.\d(?:\.\d)?)[.\s]/) || [])[1];
   function addCallout(anchor, holder, key) {
     const [text, q] = FIELD_HELP[key];
     const btn = document.createElement('button');
     btn.type = 'button'; btn.className = 'ibtn'; btn.textContent = 'i';
-    btn.title = 'What is this step?'; btn.setAttribute('aria-expanded', 'false');
+    btn.title = tr('What is this step?'); btn.setAttribute('aria-expanded', 'false');
     const box = document.createElement('div');
     box.className = 'callout'; box.hidden = true; box.id = 'help-' + key.replace(/\./g, '-');
     const p = document.createElement('p'); p.textContent = text;
-    const pq = document.createElement('p'); pq.className = 'q'; pq.textContent = 'Ask yourself: ' + q;
+    const pq = document.createElement('p'); pq.className = 'q'; pq.textContent = tr('Ask yourself: ') + q;
     box.append(p, pq);
     btn.setAttribute('aria-controls', box.id);
     btn.onclick = () => { box.hidden = !box.hidden; btn.setAttribute('aria-expanded', String(!box.hidden)); };

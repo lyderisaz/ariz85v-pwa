@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ARIZ-85C Template</title>
+<title>ARIZ-85C</title>
 <meta name="theme-color" content="#038009">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -11,76 +11,83 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<!-- data-i18n: translate text; data-i18n-html: translate markup; data-i18n-attr: translate listed attributes (see i18n.js) -->
 <header class="bar">
   <strong>ARIZ-85C</strong>
-  <select id="wsSelect" aria-label="Worksheet"></select>
-  <button id="newBtn" title="New blank worksheet">New</button>
-  <button id="examplesBtn">Examples</button>
-  <button id="openBtn" title="Import a .ariz file as a new worksheet">Open</button>
-  <button id="saveBtn" class="primary" title="Export current worksheet as .ariz (Ctrl+S)">Save</button>
-  <button id="printBtn">PDF / Print</button>
+  <select id="wsSelect" aria-label="Worksheet" data-i18n-attr="aria-label"></select>
+  <button id="newBtn" title="New blank worksheet" data-i18n data-i18n-attr="title">New</button>
+  <button id="examplesBtn" data-i18n>Examples</button>
+  <button id="openBtn" title="Import a .ariz file as a new worksheet" data-i18n data-i18n-attr="title">Open</button>
+  <button id="saveBtn" class="primary" title="Export current worksheet as .ariz (Ctrl+S)" data-i18n data-i18n-attr="title">Save</button>
+  <button id="printBtn" data-i18n>PDF / Print</button>
   <details class="menu">
-    <summary title="More">⋯</summary>
+    <summary title="More" data-i18n-attr="title">⋯</summary>
     <div>
-      <button data-act="rename">Rename worksheet</button>
-      <button data-act="duplicate">Duplicate worksheet</button>
-      <button data-act="exportExample">Export as example…</button>
-      <button data-act="clear">Clear worksheet</button>
-      <button data-act="delete" class="danger">Delete worksheet</button>
+      <button data-act="rename" data-i18n>Rename worksheet</button>
+      <button data-act="duplicate" data-i18n>Duplicate worksheet</button>
+      <button data-act="exportExample" data-i18n>Export as example…</button>
+      <button data-act="clear" data-i18n>Clear worksheet</button>
+      <button data-act="delete" class="danger" data-i18n>Delete worksheet</button>
     </div>
   </details>
   <span id="saved" class="muted"></span>
-  <div class="progress" title="Form progress"><div id="progressBar"></div></div>
+  <div class="progress" title="Form progress" data-i18n-attr="title"><div id="progressBar"></div></div>
   <span id="progressText" class="muted">0%</span>
   <input type="file" id="openFile" accept=".ariz,application/json" hidden>
 </header>
+<details class="menu lang-menu">
+  <summary id="langBtn" title="Language" aria-label="Language" data-i18n-attr="title,aria-label"></summary>
+  <div id="langList"></div>
+</details>
 <details class="menu help-menu">
-  <summary class="helpfab" title="Help" aria-label="Help">?</summary>
+  <summary class="helpfab" title="Help" aria-label="Help" data-i18n-attr="title,aria-label">?</summary>
   <div>
-    <button data-help="examples">Using worksheets &amp; examples</button>
-    <button data-help="guide">ARIZ-85C guide</button>
+    <button data-help="examples" data-i18n>Using worksheets &amp; examples</button>
+    <button data-help="guide" data-i18n>ARIZ-85C guide</button>
   </div>
 </details>
 <aside id="helpDrawer" class="help" role="dialog" aria-modal="false" aria-labelledby="helpTitle" hidden>
-  <div class="hd"><h2 id="helpTitle"></h2><button id="helpClose">Close</button></div>
+  <div class="hd"><h2 id="helpTitle"></h2><button id="helpClose" data-i18n>Close</button></div>
   <div id="helpBody"></div>
 </aside>
 <main>
-  <p class="muted">Works offline. Data stays in this browser (autosave) or in the .ariz files you save.
-  Based on ARIZ-85C (Algorithm of Inventive Problem Solving) by Genrikh Altshuller. <span id="appVersion">v01.03</span></p>
+  <p class="muted"><span data-i18n>Works offline. Data stays in this browser (autosave) or in the .ariz files you save. Based on ARIZ-85C (Algorithm of Inventive Problem Solving) by Genrikh Altshuller.</span>
+  <span id="appVersion">v02.00</span></p>
   <h1 id="wsTitle"></h1>
   <form id="mainForm" autocomplete="off"></form>
 </main>
 <dialog id="exDialog">
   <form method="dialog">
-    <h3>Examples</h3>
-    <p class="muted">Opening an example adds a copy to your worksheets; the original stays unchanged.</p>
+    <h3 data-i18n>Examples</h3>
+    <p class="muted" data-i18n>Opening an example adds a copy to your worksheets; the original stays unchanged.</p>
     <ul id="exList"></ul>
     <details>
-      <summary class="muted">How to create an example</summary>
+      <summary class="muted" data-i18n>How to create an example</summary>
       <ol class="muted">
-        <li>Fill a worksheet, then ⋯ → <em>Export as example…</em></li>
-        <li>Put the file in the repo's <code>examples/</code> folder.</li>
-        <li>Add it to <code>examples/index.json</code> and to <code>sw.js</code> (offline cache).</li>
+        <li data-i18n-html>Fill a worksheet, then ⋯ → <em>Export as example…</em></li>
+        <li data-i18n-html>Put the file in the repo's <code>examples/</code> folder.</li>
+        <li data-i18n-html>Add it to <code>examples/index.json</code> and to <code>sw.js</code> (offline cache).</li>
       </ol>
     </details>
-    <menu><button value="close">Close</button></menu>
+    <menu><button value="close" data-i18n>Close</button></menu>
   </form>
 </dialog>
 <dialog id="pwDialog">
   <form method="dialog">
-    <h3 id="pwTitle">Password</h3>
+    <h3 id="pwTitle" data-i18n>Password</h3>
     <p id="pwMsg" class="muted"></p>
-    <input type="password" id="pw1" placeholder="Password">
-    <input type="password" id="pw2" placeholder="Repeat password">
+    <input type="password" id="pw1" placeholder="Password" data-i18n-attr="placeholder">
+    <input type="password" id="pw2" placeholder="Repeat password" data-i18n-attr="placeholder">
     <menu>
-      <button value="cancel" formnovalidate>Cancel</button>
-      <button value="plain" id="pwPlain">Save without password</button>
+      <button value="cancel" formnovalidate data-i18n>Cancel</button>
+      <button value="plain" id="pwPlain" data-i18n>Save without password</button>
       <button value="ok" class="primary">OK</button>
     </menu>
   </form>
 </dialog>
+<script src="i18n.js"></script>
 <script src="app.js"></script>
+<script src="help-lt.js"></script>
 <script src="help.js"></script>
 </body>
 </html>

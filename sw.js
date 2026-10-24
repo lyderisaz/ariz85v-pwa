@@ -1,7 +1,7 @@
 // Bump VERSION when you change any file so installed copies update.
-const VERSION = 'ariz85v-v01.03';
-const FILES = ['./', 'index.html', 'style.css', 'app.js', 'help.js', 'manifest.webmanifest', 'icon.svg',
-  'examples/index.json', 'examples/pencil.ariz'];
+const VERSION = 'ariz85v-v02.00';
+const FILES = ['./', 'index.html', 'style.css', 'i18n.js', 'app.js', 'help-lt.js', 'help.js', 'manifest.webmanifest', 'icon.svg',
+  'examples/index.json', 'examples/pencil.ariz', 'examples/pencil_lt.ariz'];
 
 self.addEventListener('install', e => e.waitUntil(caches.open(VERSION).then(c => c.addAll(FILES)).then(() => self.skipWaiting())));
 self.addEventListener('activate', e => e.waitUntil(

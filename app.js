@@ -4,11 +4,12 @@ const AUTOSAVE_KEY = 'ariz_form_autosave';
 const PBKDF2 = { name: 'PBKDF2', iterations: 100000, hash: 'SHA-256' };
 
 // ---- Form schema: [type, ...args].
-const h2 = t => ['h2', t], h3 = t => ['h3', t], h4 = t => ['h4', t], n = t => ['note', t];
-const f = (name, label = '') => ['field', name, label], st = t => ['static', t];
+// Builders translate at build time (tr from i18n.js); English strings are the dictionary keys.
+const h2 = t => ['h2', tr(t)], h3 = t => ['h3', tr(t)], h4 = t => ['h4', tr(t)], n = t => ['note', tr(t)];
+const f = (name, label = '') => ['field', name, label && tr(label)], st = t => ['static', tr(t)];
 const tri = p => [f(p + 'If', 'IF'), f(p + 'Then', 'THEN'), f(p + 'But', 'BUT')];
-const img = (key, label = 'Drawing') => ['img', key, label];
-const res = (p, title) => ['res', p, title];
+const img = (key, label = 'Drawing') => ['img', key, tr(label)];
+const res = (p, title) => ['res', p, tr(title)];
 const block = items => ['block', items];
 const range = k => Array.from({ length: k }, (_, i) => i + 1);
 
@@ -118,7 +119,7 @@ const SCHEMA = [
 
   h3('Step 3.3. Physical contradiction on macro-level'),
   ...range(5).map(i => block([
-    h4(`Physical contradiction ${i}`),
+    ['h4', `${tr('Physical contradiction')} ${i}`],
     f(`physicalContradiction${i}Parameter`, '(parameter)'),
     f(`physicalContradiction${i}Resource`, 'of'),
     f(`physicalContradiction${i}Value1`, 'should be'),
@@ -156,16 +157,16 @@ function render(items, parent) {
       parent.append(el('h4', '', b));
       const g = el('div', 'res');
       for (const k of ['Substance', 'Field', 'Parameter']) {
-        const c = el('div'), l = el('label', '', k.toLowerCase()), t = textarea(a + k);
+        const c = el('div'), l = el('label', '', tr(k.toLowerCase())), t = textarea(a + k);
         l.htmlFor = a + k; c.append(l, t); g.append(c);
       }
       parent.append(g);
     } else if (type === 'img') {
       parent.append(el('h4', '', b));
       const area = el('div', 'draw-area'); area.dataset.field = a; area.tabIndex = 0; area.setAttribute('role', 'button');
-      area.setAttribute('aria-label', 'Upload image: ' + b);
+      area.setAttribute('aria-label', tr('Upload image: ') + b);
       const input = el('input'); input.type = 'file'; input.accept = 'image/*'; input.hidden = true;
-      area.append(el('span', 'hint', '📎 Click, paste or drop an image (double-click image to remove)'), input);
+      area.append(el('span', 'hint', '📎 ' + tr('Click, paste or drop an image (double-click image to remove)')), input);
       area.onclick = () => input.click();
       area.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } };
       input.onchange = () => input.files[0] && loadImage(a, input.files[0]);
@@ -180,7 +181,7 @@ function render(items, parent) {
 render(SCHEMA, form);
 
 function loadImage(key, file) {
-  if (!file.type.startsWith('image/')) return alert('Please choose an image file.');
+  if (!file.type.startsWith('image/')) return alert(tr('Please choose an image file.'));
   const r = new FileReader();
   r.onload = () => { setImage(key, r.result); changed(); };
   r.readAsDataURL(file);
@@ -194,7 +195,7 @@ function setImage(key, dataUrl) {
   images[key] = dataUrl;
   const i = el('img'); i.src = dataUrl; i.alt = key;
   i.onclick = e => e.stopPropagation();
-  i.ondblclick = e => { e.stopPropagation(); if (confirm('Remove this image?')) { setImage(key, null); changed(); } };
+  i.ondblclick = e => { e.stopPropagation(); if (confirm(tr('Remove this image?'))) { setImage(key, null); changed(); } };
   area.prepend(i);
 }
 
@@ -230,7 +231,7 @@ let list = [], current = null, timer = null;
 const readJSON = (k, def) => { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } };
 const store = (k, v) => localStorage.setItem(k, JSON.stringify(v));
 const status = t => { document.getElementById('saved').textContent = t; };
-const currentName = () => list.find(w => w.id === current)?.name || 'Untitled';
+const currentName = () => list.find(w => w.id === current)?.name || tr('Untitled');
 const uniqueName = (base, except) => { let n = base, i = 2; while (list.some(w => w.name === n && w.id !== except)) n = `${base} (${i++})`; return n; };
 const isWorksheet = o => o && typeof o === 'object' && !Array.isArray(o);
 
@@ -240,12 +241,12 @@ function renderSelect() {
   sel.replaceChildren(...list.map(w => { const o = el('option', '', w.name); o.value = w.id; return o; }));
   sel.value = current;
   document.getElementById('wsTitle').textContent = currentName();
-  document.title = currentName() + ' – ARIZ-85C';
+  document.title = currentName() + ' – ' + tr('ARIZ-85C');
 }
 
 function persist() {
-  try { store(WS(current), getData()); status('Autosaved ' + new Date().toLocaleTimeString()); }
-  catch { status('Autosave failed — storage full. Remove large images or delete worksheets.'); }
+  try { store(WS(current), getData()); status(tr('Autosaved ') + new Date().toLocaleTimeString()); }
+  catch { status(tr('Autosave failed — storage full. Remove large images or delete worksheets.')); }
 }
 function flush() { if (timer) { clearTimeout(timer); timer = null; persist(); } }
 
@@ -260,7 +261,7 @@ addEventListener('pagehide', flush);
 function addWorksheet(name, data = {}) {
   flush();
   const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-  try { store(WS(id), data); } catch { return alert('Not enough browser storage. Delete some worksheets or images first.'); }
+  try { store(WS(id), data); } catch { return alert(tr('Not enough browser storage. Delete some worksheets or images first.')); }
   list.push({ id, name: uniqueName(name) });
   current = id; saveList(); setData(data); renderSelect();
   status('');
@@ -273,9 +274,10 @@ function switchTo(id) {
 }
 sel.onchange = () => switchTo(sel.value);
 
-// ---- Examples: examples/index.json lists [{file, name, description}]
+// ---- Examples: examples/index.json lists [{file, lang, name, description}]; current language first.
 let examples = null;
-const getExamples = async () => examples ??= await fetch('examples/index.json').then(r => r.json());
+const getExamples = async () => examples ??= (await fetch('examples/index.json').then(r => r.json()))
+  .sort((a, b) => (b.lang === LANG) - (a.lang === LANG));
 async function loadExample(ex) {
   const data = await fetch('examples/' + ex.file).then(r => r.json());
   addWorksheet(ex.name, data);
@@ -286,41 +288,44 @@ async function showExamples() {
   const ul = document.getElementById('exList');
   try {
     ul.replaceChildren(...(await getExamples()).map(ex => {
-      const li = el('li'), info = el('div'), b = el('button', 'primary', 'Open copy');
-      info.append(el('strong', '', ex.name), el('p', 'muted', ex.description || ''));
+      const li = el('li'), info = el('div'), b = el('button', 'primary', tr('Open copy'));
+      const name = el('strong', '', ex.name);
+      if (FLAGS[ex.lang]) name.insertAdjacentHTML('afterbegin', FLAGS[ex.lang]); // static SVG from i18n.js
+      info.append(name, el('p', 'muted', ex.description || ''));
       b.type = 'button';
-      b.onclick = async () => { exDialog.close(); try { await loadExample(ex); } catch { alert('Could not load example.'); } };
+      b.onclick = async () => { exDialog.close(); try { await loadExample(ex); } catch { alert(tr('Could not load example.')); } };
       li.append(info, b); return li;
     }));
-  } catch { ul.replaceChildren(el('li', 'muted', 'Examples are not available (offline before first load?).')); }
+  } catch { ul.replaceChildren(el('li', 'muted', tr('Examples are not available (offline before first load?).'))); }
   exDialog.showModal();
 }
 
-const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'ariz';
+const slug = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+  .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'ariz';
 
 function exportExample() {
-  const description = prompt('Short description of this example:', '');
+  const description = prompt(tr('Short description of this example:'), '');
   if (description === null) return;
   flush();
-  download({ _name: currentName(), _description: description, ...getData() }, slug(currentName()));
+  download({ _name: currentName(), _description: description, _lang: LANG, ...getData() }, slug(currentName()));
 }
 
 const menuActions = {
   rename() {
-    const n = prompt('Worksheet name:', currentName());
+    const n = prompt(tr('Worksheet name:'), currentName());
     if (!n || !n.trim()) return;
     list.find(w => w.id === current).name = uniqueName(n.trim(), current);
     saveList(); renderSelect();
   },
-  duplicate() { flush(); addWorksheet(currentName() + ' copy', getData()); },
+  duplicate() { flush(); addWorksheet(currentName() + tr(' copy'), getData()); },
   exportExample,
-  clear() { if (confirm(`Clear all fields and images in "${currentName()}"?`)) { setData({}); persist(); } },
+  clear() { if (confirm(trf('Clear all fields and images in "{0}"?', currentName()))) { setData({}); persist(); } },
   delete() {
-    if (!confirm(`Delete worksheet "${currentName()}"? Save it first if you need it.`)) return;
+    if (!confirm(trf('Delete worksheet "{0}"? Save it first if you need it.', currentName()))) return;
     clearTimeout(timer); timer = null;
     localStorage.removeItem(WS(current));
     list = list.filter(w => w.id !== current);
-    if (list.length) switchTo(list[0].id); else addWorksheet('Untitled');
+    if (list.length) switchTo(list[0].id); else addWorksheet(tr('Untitled'));
   },
 };
 const menu = document.querySelector('.bar .menu');
@@ -350,10 +355,10 @@ async function decrypt(enc, password) {
 // ---- Password dialog: resolves {action: 'ok'|'plain'|'cancel', password}
 const dlg = document.getElementById('pwDialog'), pw1 = document.getElementById('pw1'), pw2 = document.getElementById('pw2');
 function askPassword(saving) {
-  document.getElementById('pwTitle').textContent = saving ? 'Save file' : 'Encrypted file';
-  document.getElementById('pwMsg').textContent = saving
+  document.getElementById('pwTitle').textContent = tr(saving ? 'Save file' : 'Encrypted file');
+  document.getElementById('pwMsg').textContent = tr(saving
     ? 'Optional: set a password (min 4 chars) to encrypt the file. It cannot be recovered if lost.'
-    : 'Enter the password to decrypt this file.';
+    : 'Enter the password to decrypt this file.');
   pw2.hidden = document.getElementById('pwPlain').hidden = !saving;
   pw1.value = pw2.value = '';
   dlg.showModal();
@@ -369,13 +374,13 @@ function download(obj, base) {
 async function save() {
   flush();
   const data = { _name: currentName(), ...getData() };
-  if (!hasData(getData())) return alert('The worksheet is empty.');
+  if (!hasData(getData())) return alert(tr('The worksheet is empty.'));
   for (;;) {
     const r = await askPassword(true);
     if (r.action === 'cancel' || !r.action) return;
     if (r.action === 'plain') { download(data, slug(currentName())); break; }
-    if (r.password.length < 4) { alert('Password must be at least 4 characters.'); continue; }
-    if (r.password !== pw2.value) { alert('Passwords do not match.'); continue; }
+    if (r.password.length < 4) { alert(tr('Password must be at least 4 characters.')); continue; }
+    if (r.password !== pw2.value) { alert(tr('Passwords do not match.')); continue; }
     download(await encrypt(data, r.password), slug(currentName())); break;
   }
 }
@@ -383,13 +388,13 @@ async function save() {
 // Imports a file as a new worksheet, so nothing is overwritten.
 async function openFile(file) {
   let obj;
-  try { obj = JSON.parse(await file.text()); } catch { return alert('Invalid file — expected a .ariz file.'); }
+  try { obj = JSON.parse(await file.text()); } catch { return alert(tr('Invalid file — expected a .ariz file.')); }
   if (Array.isArray(obj?.salt) && Array.isArray(obj.iv) && Array.isArray(obj.data)) {
     const r = await askPassword(false);
     if (r.action !== 'ok') return;
-    try { obj = await decrypt(obj, r.password); } catch { return alert('Wrong password or corrupted file.'); }
+    try { obj = await decrypt(obj, r.password); } catch { return alert(tr('Wrong password or corrupted file.')); }
   }
-  if (!isWorksheet(obj)) return alert('Invalid file — expected a .ariz file.');
+  if (!isWorksheet(obj)) return alert(tr('Invalid file — expected a .ariz file.'));
   const name = typeof obj._name === 'string' && obj._name.trim() ? obj._name.trim() : file.name.replace(/\.ariz$/i, '');
   addWorksheet(name, obj);
 }
@@ -399,7 +404,7 @@ const openInput = document.getElementById('openFile');
 document.getElementById('openBtn').onclick = () => openInput.click();
 openInput.onchange = () => { if (openInput.files[0]) openFile(openInput.files[0]); openInput.value = ''; };
 document.getElementById('saveBtn').onclick = save;
-document.getElementById('newBtn').onclick = () => addWorksheet('Untitled');
+document.getElementById('newBtn').onclick = () => addWorksheet(tr('Untitled'));
 document.getElementById('examplesBtn').onclick = showExamples;
 document.getElementById('printBtn').onclick = () => { fields().forEach(grow); print(); };
 document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); save(); } });
@@ -413,10 +418,10 @@ document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.ke
   } else {
     list = [];
     const old = readJSON(AUTOSAVE_KEY, null);
-    if (isWorksheet(old)) { addWorksheet('My worksheet', old); localStorage.removeItem(AUTOSAVE_KEY); }
+    if (isWorksheet(old)) { addWorksheet(tr('My worksheet'), old); localStorage.removeItem(AUTOSAVE_KEY); }
     try { const [first] = await getExamples(); if (first) await loadExample(first); } catch (e) { console.warn('Examples unavailable', e); }
     if (isWorksheet(old)) switchTo(list[0].id);
-    if (!list.length) addWorksheet('Untitled');
+    if (!list.length) addWorksheet(tr('Untitled'));
   }
   // Opening a .ariz file via OS "Open with" when installed (Chromium file handling)
   if ('launchQueue' in window) launchQueue.setConsumer(async p => { if (p.files[0]) openFile(await p.files[0].getFile()); });
