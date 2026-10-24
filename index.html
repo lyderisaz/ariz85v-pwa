@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ARIZ-85C Template</title>
-<meta name="theme-color" content="#1f2f57">
+<meta name="theme-color" content="#038009">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon.svg">
@@ -34,9 +34,20 @@
   <span id="progressText" class="muted">0%</span>
   <input type="file" id="openFile" accept=".ariz,application/json" hidden>
 </header>
+<details class="menu help-menu">
+  <summary class="helpfab" title="Help" aria-label="Help">?</summary>
+  <div>
+    <button data-help="examples">Using worksheets &amp; examples</button>
+    <button data-help="guide">ARIZ-85C guide</button>
+  </div>
+</details>
+<aside id="helpDrawer" class="help" role="dialog" aria-modal="false" aria-labelledby="helpTitle" hidden>
+  <div class="hd"><h2 id="helpTitle"></h2><button id="helpClose">Close</button></div>
+  <div id="helpBody"></div>
+</aside>
 <main>
   <p class="muted">Works offline. Data stays in this browser (autosave) or in the .ariz files you save.
-  Based on ARIZ-85C (Algorithm of Inventive Problem Solving) by Genrikh Altshuller. <span id="appVersion">v01.01</span></p>
+  Based on ARIZ-85C (Algorithm of Inventive Problem Solving) by Genrikh Altshuller. <span id="appVersion">v01.02</span></p>
   <h1 id="wsTitle"></h1>
   <form id="mainForm" autocomplete="off"></form>
 </main>
@@ -70,5 +81,6 @@
   </form>
 </dialog>
 <script src="app.js"></script>
+<script src="help.js"></script>
 </body>
 </html>

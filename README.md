@@ -12,6 +12,8 @@ Live: https://lyderisaz.github.io/ariz85v-pwa/
 - Examples: open a copy of a worked case (first: *Pencil*); export your own worksheet as an example
 - Open/Save `.ariz` files (Open imports as a new worksheet), optionally password-encrypted (AES-GCM 256, PBKDF2-SHA256)
 - Images per step: click, drag & drop or paste
+- Help: round **?** in the top-right corner → *Using worksheets & examples* and *ARIZ-85C guide* (steps, rules, typical conflicts, separation principles, terms); **ⓘ** next to each step opens a short explanation with a guiding question
+- Colour scheme from DrakonWidget, kept as tokens at the top of `style.css` (to be replaced by branding rules)
 - Print / Save as PDF
 - No server, no tracking: data never leaves your device unless you save a file
 
@@ -22,7 +24,8 @@ index.html             page shell + toolbar
 app.js                 form schema, rendering, worksheet library, examples, .ariz open/save, encryption
 examples/index.json    list of examples: [{ file, name, description }]
 examples/*.ariz        example worksheets (unencrypted .ariz)
-style.css              layout, dark mode, print styles
+help.js                help pages and ⓘ step callouts (texts in English)
+style.css              brand tokens (top), layout, dark mode, print styles
 sw.js                  service worker (offline cache) — bump VERSION on every release
 manifest.webmanifest   PWA metadata, .ariz file handler
 icon.svg               app icon

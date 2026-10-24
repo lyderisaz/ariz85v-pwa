@@ -1,5 +1,12 @@
 # Changelog
 
+## v01.02 — 2026-10-24
+
+- Colour scheme from DrakonWidget (Classic canvas `#97d3e1`, white blocks with black border, green `#038009` buttons, light-green hover, dark-red danger, Arial); all colours are tokens at the top of `style.css`; dark mode derived from it; new icon
+- Help menu: round **?** fixed in the top-right corner with *Using worksheets & examples* and *ARIZ-85C guide*; opens in a side panel; shown once on first visit; Esc closes
+- ARIZ-85C guide: Parts 1–3 steps, rules R1–R3, loops, SFR kinds, Table 1 (typical conflicts), Table 2 (separation principles), Parts 4–9 overview, terms (own-words summary based on the triz-ariz notes)
+- **ⓘ** callouts on 24 steps/fields: explanation + "Ask yourself" question; hidden in print
+
 ## v01.01 — 2026-10-24
 
 - Worksheet library: multiple worksheets with switch, New, Rename, Duplicate, Delete, Clear; each autosaves

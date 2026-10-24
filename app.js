@@ -323,7 +323,7 @@ const menuActions = {
     if (list.length) switchTo(list[0].id); else addWorksheet('Untitled');
   },
 };
-const menu = document.querySelector('.menu');
+const menu = document.querySelector('.bar .menu');
 menu.addEventListener('click', e => {
   const act = e.target.dataset?.act;
   if (act) { menu.open = false; menuActions[act](); }
