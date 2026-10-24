@@ -8,7 +8,9 @@ Live: https://lyderisaz.github.io/ariz85v-pwa/
 ## Features
 
 - Works offline and installs as an app (Chrome/Edge: install icon in the address bar)
-- Autosave in the browser; Open/Save `.ariz` files, optionally password-encrypted (AES-GCM 256, PBKDF2-SHA256)
+- Several worksheets in one browser: switch, New, Rename, Duplicate, Delete — each autosaves
+- Examples: open a copy of a worked case (first: *Pencil*); export your own worksheet as an example
+- Open/Save `.ariz` files (Open imports as a new worksheet), optionally password-encrypted (AES-GCM 256, PBKDF2-SHA256)
 - Images per step: click, drag & drop or paste
 - Print / Save as PDF
 - No server, no tracking: data never leaves your device unless you save a file
@@ -17,7 +19,9 @@ Live: https://lyderisaz.github.io/ariz85v-pwa/
 
 ```
 index.html             page shell + toolbar
-app.js                 form schema, rendering, autosave, .ariz open/save, encryption
+app.js                 form schema, rendering, worksheet library, examples, .ariz open/save, encryption
+examples/index.json    list of examples: [{ file, name, description }]
+examples/*.ariz        example worksheets (unencrypted .ariz)
 style.css              layout, dark mode, print styles
 sw.js                  service worker (offline cache) — bump VERSION on every release
 manifest.webmanifest   PWA metadata, .ariz file handler
@@ -43,9 +47,16 @@ Then open http://localhost:8765.
 2. Add a `CHANGELOG.md` entry.
 3. Commit, tag `vXX.YY`, push with tags.
 
+## Adding an example
+
+1. Fill a worksheet, then ⋯ → **Export as example…** (unencrypted, includes name and description).
+2. Put the file in `examples/` and add an entry to `examples/index.json`.
+3. Add the path to `FILES` in `sw.js`, bump `VERSION`, release.
+
 ## .ariz file format
 
 JSON object of field name → text, plus `uploadedImages` (field → `data:image/...` URL).
+Optional `_name` and `_description` (worksheet name, example description); readers that don't know them ignore them.
 Encrypted files are `{ "salt": [...], "iv": [...], "data": [...] }` byte arrays (16-byte salt, 12-byte IV, 100 000 PBKDF2 iterations).
 
 ## Credits

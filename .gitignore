@@ -1,3 +1,4 @@
 # Local-only working notes
 chat_log.md
 *.ariz
+!examples/*.ariz

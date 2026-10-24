@@ -221,16 +221,114 @@ function progress() {
   document.getElementById('progressText').textContent = pct + '%';
 }
 
-let dirty = false, timer;
+// ---- Worksheet library (drakonwidget-style: list in localStorage, seeded from examples/)
+// shortcut: all worksheets share the ~5 MB localStorage quota, images fill it fast; move to IndexedDB if users hit it.
+const LIST_KEY = 'ariz_worksheets', CUR_KEY = 'ariz_current', WS = id => 'ariz_ws_' + id;
+const sel = document.getElementById('wsSelect');
+let list = [], current = null, timer = null;
+
+const readJSON = (k, def) => { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } };
+const store = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+const status = t => { document.getElementById('saved').textContent = t; };
+const currentName = () => list.find(w => w.id === current)?.name || 'Untitled';
+const uniqueName = (base, except) => { let n = base, i = 2; while (list.some(w => w.name === n && w.id !== except)) n = `${base} (${i++})`; return n; };
+const isWorksheet = o => o && typeof o === 'object' && !Array.isArray(o);
+
+function saveList() { store(LIST_KEY, list); localStorage.setItem(CUR_KEY, current); }
+
+function renderSelect() {
+  sel.replaceChildren(...list.map(w => { const o = el('option', '', w.name); o.value = w.id; return o; }));
+  sel.value = current;
+  document.getElementById('wsTitle').textContent = currentName();
+  document.title = currentName() + ' – ARIZ-85C';
+}
+
+function persist() {
+  try { store(WS(current), getData()); status('Autosaved ' + new Date().toLocaleTimeString()); }
+  catch { status('Autosave failed — storage full. Remove large images or delete worksheets.'); }
+}
+function flush() { if (timer) { clearTimeout(timer); timer = null; persist(); } }
+
 function changed() {
-  dirty = true; progress();
+  progress();
   clearTimeout(timer);
-  timer = setTimeout(() => {
-    try { localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(getData())); document.getElementById('saved').textContent = 'Autosaved ' + new Date().toLocaleTimeString(); }
-    catch (e) { document.getElementById('saved').textContent = 'Autosave failed (storage full? remove large images)'; }
-  }, 1000);
+  timer = setTimeout(() => { timer = null; persist(); }, 1000);
 }
 form.addEventListener('input', e => { if (e.target.tagName === 'TEXTAREA') grow(e.target); changed(); });
+addEventListener('pagehide', flush);
+
+function addWorksheet(name, data = {}) {
+  flush();
+  const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  try { store(WS(id), data); } catch { return alert('Not enough browser storage. Delete some worksheets or images first.'); }
+  list.push({ id, name: uniqueName(name) });
+  current = id; saveList(); setData(data); renderSelect();
+  status('');
+}
+
+function switchTo(id) {
+  flush();
+  current = id; saveList(); setData(readJSON(WS(id), {})); renderSelect();
+  status('');
+}
+sel.onchange = () => switchTo(sel.value);
+
+// ---- Examples: examples/index.json lists [{file, name, description}]
+let examples = null;
+const getExamples = async () => examples ??= await fetch('examples/index.json').then(r => r.json());
+async function loadExample(ex) {
+  const data = await fetch('examples/' + ex.file).then(r => r.json());
+  addWorksheet(ex.name, data);
+}
+
+const exDialog = document.getElementById('exDialog');
+async function showExamples() {
+  const ul = document.getElementById('exList');
+  try {
+    ul.replaceChildren(...(await getExamples()).map(ex => {
+      const li = el('li'), info = el('div'), b = el('button', 'primary', 'Open copy');
+      info.append(el('strong', '', ex.name), el('p', 'muted', ex.description || ''));
+      b.type = 'button';
+      b.onclick = async () => { exDialog.close(); try { await loadExample(ex); } catch { alert('Could not load example.'); } };
+      li.append(info, b); return li;
+    }));
+  } catch { ul.replaceChildren(el('li', 'muted', 'Examples are not available (offline before first load?).')); }
+  exDialog.showModal();
+}
+
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'ariz';
+
+function exportExample() {
+  const description = prompt('Short description of this example:', '');
+  if (description === null) return;
+  flush();
+  download({ _name: currentName(), _description: description, ...getData() }, slug(currentName()));
+}
+
+const menuActions = {
+  rename() {
+    const n = prompt('Worksheet name:', currentName());
+    if (!n || !n.trim()) return;
+    list.find(w => w.id === current).name = uniqueName(n.trim(), current);
+    saveList(); renderSelect();
+  },
+  duplicate() { flush(); addWorksheet(currentName() + ' copy', getData()); },
+  exportExample,
+  clear() { if (confirm(`Clear all fields and images in "${currentName()}"?`)) { setData({}); persist(); } },
+  delete() {
+    if (!confirm(`Delete worksheet "${currentName()}"? Save it first if you need it.`)) return;
+    clearTimeout(timer); timer = null;
+    localStorage.removeItem(WS(current));
+    list = list.filter(w => w.id !== current);
+    if (list.length) switchTo(list[0].id); else addWorksheet('Untitled');
+  },
+};
+const menu = document.querySelector('.menu');
+menu.addEventListener('click', e => {
+  const act = e.target.dataset?.act;
+  if (act) { menu.open = false; menuActions[act](); }
+});
+document.addEventListener('click', e => { if (!menu.contains(e.target)) menu.open = false; });
 
 // ---- Crypto (AES-GCM 256, key from PBKDF2-SHA256; file is {salt, iv, data} as byte arrays)
 async function deriveKey(password, salt, usage) {
@@ -262,36 +360,38 @@ function askPassword(saving) {
   return new Promise(res => dlg.addEventListener('close', () => res({ action: dlg.returnValue, password: pw1.value }), { once: true }));
 }
 
-function download(obj) {
-  const name = `ariz-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-')}.ariz`;
+function download(obj, base) {
+  const name = `${base}-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-')}.ariz`;
   const a = el('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(obj)], { type: 'application/octet-stream' }));
   a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
 async function save() {
-  const data = getData();
-  if (!hasData(data)) return alert('The form is empty.');
+  flush();
+  const data = { _name: currentName(), ...getData() };
+  if (!hasData(getData())) return alert('The worksheet is empty.');
   for (;;) {
     const r = await askPassword(true);
     if (r.action === 'cancel' || !r.action) return;
-    if (r.action === 'plain') { download(data); break; }
+    if (r.action === 'plain') { download(data, slug(currentName())); break; }
     if (r.password.length < 4) { alert('Password must be at least 4 characters.'); continue; }
     if (r.password !== pw2.value) { alert('Passwords do not match.'); continue; }
-    download(await encrypt(data, r.password)); break;
+    download(await encrypt(data, r.password), slug(currentName())); break;
   }
-  dirty = false;
 }
 
+// Imports a file as a new worksheet, so nothing is overwritten.
 async function openFile(file) {
   let obj;
   try { obj = JSON.parse(await file.text()); } catch { return alert('Invalid file — expected a .ariz file.'); }
-  if (dirty && hasData(getData()) && !confirm('Replace the current form with this file?')) return;
-  if (Array.isArray(obj.salt) && Array.isArray(obj.iv) && Array.isArray(obj.data)) {
+  if (Array.isArray(obj?.salt) && Array.isArray(obj.iv) && Array.isArray(obj.data)) {
     const r = await askPassword(false);
     if (r.action !== 'ok') return;
     try { obj = await decrypt(obj, r.password); } catch { return alert('Wrong password or corrupted file.'); }
   }
-  try { setData(obj); changed(); dirty = false; } catch { alert('Invalid file — expected a .ariz file.'); }
+  if (!isWorksheet(obj)) return alert('Invalid file — expected a .ariz file.');
+  const name = typeof obj._name === 'string' && obj._name.trim() ? obj._name.trim() : file.name.replace(/\.ariz$/i, '');
+  addWorksheet(name, obj);
 }
 
 // ---- Toolbar
@@ -299,19 +399,27 @@ const openInput = document.getElementById('openFile');
 document.getElementById('openBtn').onclick = () => openInput.click();
 openInput.onchange = () => { if (openInput.files[0]) openFile(openInput.files[0]); openInput.value = ''; };
 document.getElementById('saveBtn').onclick = save;
+document.getElementById('newBtn').onclick = () => addWorksheet('Untitled');
+document.getElementById('examplesBtn').onclick = showExamples;
 document.getElementById('printBtn').onclick = () => { fields().forEach(grow); print(); };
-document.getElementById('clearBtn').onclick = () => {
-  if (!confirm('Clear all fields and images? Save first if you need them.')) return;
-  setData({}); localStorage.removeItem(AUTOSAVE_KEY); dirty = false;
-  document.getElementById('saved').textContent = '';
-};
 document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); save(); } });
-addEventListener('beforeunload', e => { if (dirty) e.preventDefault(); });
-// Opening a .ariz file via OS "Open with" when installed (Chromium file handling)
-if ('launchQueue' in window) launchQueue.setConsumer(async p => { if (p.files[0]) openFile(await p.files[0].getFile()); });
 
-// ---- Restore autosave
-try { const s = localStorage.getItem(AUTOSAVE_KEY); if (s) setData(JSON.parse(s)); } catch (e) { console.warn('Autosave restore failed', e); }
-progress();
+// ---- Start: restore library, or seed it (migrating the v01.00 single-form autosave)
+(async () => {
+  list = readJSON(LIST_KEY, []);
+  if (Array.isArray(list) && list.length) {
+    const id = localStorage.getItem(CUR_KEY);
+    switchTo(list.some(w => w.id === id) ? id : list[0].id);
+  } else {
+    list = [];
+    const old = readJSON(AUTOSAVE_KEY, null);
+    if (isWorksheet(old)) { addWorksheet('My worksheet', old); localStorage.removeItem(AUTOSAVE_KEY); }
+    try { const [first] = await getExamples(); if (first) await loadExample(first); } catch (e) { console.warn('Examples unavailable', e); }
+    if (isWorksheet(old)) switchTo(list[0].id);
+    if (!list.length) addWorksheet('Untitled');
+  }
+  // Opening a .ariz file via OS "Open with" when installed (Chromium file handling)
+  if ('launchQueue' in window) launchQueue.setConsumer(async p => { if (p.files[0]) openFile(await p.files[0].getFile()); });
+})();
 
 if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js');
