@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARIZ-85C Template</title>
+<meta name="theme-color" content="#1f2f57">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="bar">
+  <strong>ARIZ-85C</strong>
+  <span id="saved" class="muted"></span>
+  <div class="progress" title="Form progress"><div id="progressBar"></div></div>
+  <span id="progressText" class="muted">0%</span>
+  <button id="openBtn">Open</button>
+  <button id="saveBtn" class="primary">Save</button>
+  <button id="printBtn">PDF / Print</button>
+  <button id="clearBtn">Clear</button>
+  <input type="file" id="openFile" accept=".ariz,application/json" hidden>
+</header>
+<main>
+  <p class="muted">Works offline. Data stays in this browser (autosave) or in the .ariz files you save.
+  Based on ARIZ-85C (Algorithm of Inventive Problem Solving) by Genrikh Altshuller. <span id="appVersion">v01.00</span></p>
+  <form id="mainForm" autocomplete="off"></form>
+</main>
+<dialog id="pwDialog">
+  <form method="dialog">
+    <h3 id="pwTitle">Password</h3>
+    <p id="pwMsg" class="muted"></p>
+    <input type="password" id="pw1" placeholder="Password">
+    <input type="password" id="pw2" placeholder="Repeat password">
+    <menu>
+      <button value="cancel" formnovalidate>Cancel</button>
+      <button value="plain" id="pwPlain">Save without password</button>
+      <button value="ok" class="primary">OK</button>
+    </menu>
+  </form>
+</dialog>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "ARIZ-85C Template",
+  "short_name": "ARIZ",
+  "description": "Offline ARIZ-85C worksheet with encrypted .ariz files",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f7fb",
+  "theme_color": "#1f2f57",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ],
+  "file_handlers": [
+    { "action": "./", "accept": { "application/octet-stream": [".ariz"] } }
+  ]
+}
