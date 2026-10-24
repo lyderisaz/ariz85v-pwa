@@ -1,5 +1,10 @@
 # Changelog
 
+## v01.03 — 2026-10-24
+
+- Updates apply on the first visit: when a new version takes over, the page saves the worksheet and reloads itself once (no reload on the very first install)
+- Note: browsers still on v01.02 or older get this once more the old way (one manual reload); from v01.03 on it is automatic
+
 ## v01.02 — 2026-10-24
 
 - Colour scheme from DrakonWidget (Classic canvas `#97d3e1`, white blocks with black border, green `#038009` buttons, light-green hover, dark-red danger, Arial); all colours are tokens at the top of `style.css`; dark mode derived from it; new icon

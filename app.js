@@ -422,4 +422,10 @@ document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.ke
   if ('launchQueue' in window) launchQueue.setConsumer(async p => { if (p.files[0]) openFile(await p.files[0].getFile()); });
 })();
 
-if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('sw.js');
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  // A new sw.js takes over at once (skipWaiting + clients.claim): reload once so the page matches it.
+  // Only when a worker already controlled the page, so the very first install doesn't reload.
+  if (navigator.serviceWorker.controller)
+    navigator.serviceWorker.addEventListener('controllerchange', () => { flush(); location.reload(); }, { once: true });
+  navigator.serviceWorker.register('sw.js');
+}
