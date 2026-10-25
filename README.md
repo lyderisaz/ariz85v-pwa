@@ -4,7 +4,7 @@ Offline worksheet for **ARIZ-85C** (Lithuanian/Russian name **ARIZ-85V**, АРИ
 Covers Parts 1–3: problem analysis, problem model and resources, ideal final result and physical contradictions.
 Interface in **English** and **Lithuanian** (lietuvių).
 
-Live: https://lyderisaz.github.io/ariz85v-pwa/
+Live: https://ariz85v-pwa.inventship.workers.dev/ (Cloudflare Workers static assets; deploy with `npx wrangler deploy`)
 
 ## Features
 

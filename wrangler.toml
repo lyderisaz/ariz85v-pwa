@@ -1,0 +1,5 @@
+name = "ariz85v-pwa"
+compatibility_date = "2026-10-19"
+
+[assets]
+directory = "."

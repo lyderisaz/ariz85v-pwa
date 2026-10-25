@@ -2,3 +2,4 @@
 chat_log.md
 *.ariz
 !examples/*.ariz
+.wrangler/
